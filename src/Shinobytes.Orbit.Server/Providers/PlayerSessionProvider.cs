@@ -1,16 +1,25 @@
 ﻿using System.Net.WebSockets;
 using System.Threading.Tasks;
+using Shinobytes.Core;
 
 namespace Shinobytes.Orbit.Server
 {
     public class PlayerSessionProvider : IPlayerSessionProvider
     {
+        private readonly ILogger logger;
         private readonly IConnectionProvider connectionProvider;
+        private readonly IPlayerConnectionHandler playerConnectionHandler;
         private readonly IPlayerSessionBinder sessionBinder;
 
-        public PlayerSessionProvider(IConnectionProvider connectionProvider, IPlayerSessionBinder sessionBinder)
+        public PlayerSessionProvider(
+            ILogger logger,
+            IConnectionProvider connectionProvider,
+            IPlayerConnectionHandler playerConnectionHandler,
+            IPlayerSessionBinder sessionBinder)
         {
+            this.logger = logger;
             this.connectionProvider = connectionProvider;
+            this.playerConnectionHandler = playerConnectionHandler;
             this.sessionBinder = sessionBinder;
         }
 
@@ -26,6 +35,11 @@ namespace Shinobytes.Orbit.Server
             {
                 throw new SessionNotFoundException();
             }
+
+            logger.WriteDebug($"Session '{playerSession.Id}' connected to stream.");
+
+            playerConnectionHandler.Open(playerSession, connection);
+
             return playerSession;
         }
     }

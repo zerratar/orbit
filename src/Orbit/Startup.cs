@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,9 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Shinobytes.Core;
 using Shinobytes.Orbit.Server;
 
 namespace Orbit
@@ -58,7 +53,8 @@ namespace Orbit
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ApplicationServices.GetService<IGame>().Begin(); // let the game begin!
+            var game = app.ApplicationServices.GetService<IGame>();
+            game.Begin(); // let the game begin!
 
             var webSocketOptions = new WebSocketOptions()
             {
@@ -74,12 +70,12 @@ namespace Orbit
                 if (context.Request.Path == "/ws")
                 {
                     var playerSessionProvider = context.RequestServices.GetService<IPlayerSessionProvider>();
+
                     if (context.WebSockets.IsWebSocketRequest)
                     {
                         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                         var playerSession = await playerSessionProvider.GetAsync(webSocket);
-
-                        await Echo(context, webSocket);
+                        game.PlayerConnectionEstablished(playerSession);                        
                     }
                     else
                     {
@@ -91,19 +87,6 @@ namespace Orbit
                     await next();
                 }
             });
-        }
-
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-        }
+        }     
     }
 }

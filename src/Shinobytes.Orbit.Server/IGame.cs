@@ -3,5 +3,7 @@
     public interface IGame
     {
         void Begin();
+
+        void PlayerConnectionEstablished(PlayerSession playerSession);
     }
 }

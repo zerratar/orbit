@@ -19,13 +19,13 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shinobytes.Orbit.Server\Shinobytes.Orbit.Server.csproj" />
+  <ItemGroup>    
+    <ProjectReference Include="..\Shinobytes.Orbit.Server\Shinobytes.Orbit.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Shinobytes.Core">
-      <HintPath>..\..\core\Shinobytes.Core\bin\Debug\netstandard2.0\Shinobytes.Core.dll</HintPath>
+      <HintPath>..\..\..\core\Shinobytes.Core\bin\Debug\netstandard2.0\Shinobytes.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 

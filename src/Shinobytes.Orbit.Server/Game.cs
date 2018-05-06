@@ -17,5 +17,9 @@ namespace Shinobytes.Orbit.Server
         public void Begin()
         {
         }
+
+        public void PlayerConnectionEstablished(PlayerSession playerSession)
+        {
+        }
     }
 }
