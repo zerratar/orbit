@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orbit", "src\Orbit\Orbit.csproj", "{B97EFBB8-7A7A-4518-851A-CAA759835E06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orbit", "src\Orbit\Orbit.csproj", "{B97EFBB8-7A7A-4518-851A-CAA759835E06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shinobytes.Orbit.Server", "src\Shinobytes.Orbit.Server\Shinobytes.Orbit.Server.csproj", "{F5C231FD-7E18-4002-9EF3-28EC183363C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shinobytes.Orbit.Server", "src\Shinobytes.Orbit.Server\Shinobytes.Orbit.Server.csproj", "{F5C231FD-7E18-4002-9EF3-28EC183363C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shinobytes.Orbit.Server.Tests", "tests\Shinobytes.Orbit.Server.Tests\Shinobytes.Orbit.Server.Tests.csproj", "{B035560F-E5FE-47C6-850E-171CD2A97617}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F5C231FD-7E18-4002-9EF3-28EC183363C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5C231FD-7E18-4002-9EF3-28EC183363C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5C231FD-7E18-4002-9EF3-28EC183363C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B035560F-E5FE-47C6-850E-171CD2A97617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B035560F-E5FE-47C6-850E-171CD2A97617}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B035560F-E5FE-47C6-850E-171CD2A97617}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B035560F-E5FE-47C6-850E-171CD2A97617}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

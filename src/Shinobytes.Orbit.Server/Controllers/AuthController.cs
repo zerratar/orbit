@@ -8,10 +8,10 @@ namespace Orbit.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly IPlayerSessionManager sessionManager;
+        private readonly IUserSessionManager sessionManager;
         private readonly IPlayerAuthenticator auth;
 
-        public AuthController(IPlayerSessionManager sessionManager, IPlayerAuthenticator auth)
+        public AuthController(IUserSessionManager sessionManager, IPlayerAuthenticator auth)
         {
             this.sessionManager = sessionManager;
             this.auth = auth;

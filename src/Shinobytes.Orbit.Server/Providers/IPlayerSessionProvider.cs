@@ -5,6 +5,6 @@ namespace Shinobytes.Orbit.Server
 {
     public interface IPlayerSessionProvider
     {
-        Task<PlayerSession> GetAsync(WebSocket socket);
+        Task<UserSession> GetAsync(WebSocket socket);
     }
 }

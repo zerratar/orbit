@@ -20,7 +20,7 @@ namespace Orbit
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://*:52102")
+                .UseUrls("http://*:1337")
                 .Build();
     }
 }

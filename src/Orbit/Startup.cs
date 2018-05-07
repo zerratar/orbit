@@ -31,12 +31,18 @@ namespace Orbit
                 options.AddPolicy("AllowAllHeaders", builder => builder.AllowAnyHeader());
             });
 
-            services.AddSingleton<IPlayerSessionProvider, PlayerSessionProvider>();
-            services.AddSingleton<IPlayerSessionManager, PlayerSessionManager>();
+            services.AddSingleton<IPlayerSessionProvider, UserSessionProvider>();
+            services.AddSingleton<IUserSessionManager, UserSessionManager>();
             services.AddSingleton<IPlayerSessionBinder, PlayerSessionBinder>();
             services.AddSingleton<IPlayerAuthenticator, PlayerAuthenticator>();
+
+            services.AddSingleton<INodeRepository, MemoryCachedFileBasedNodeRepository>();
             services.AddSingleton<IPlayerRepository, MemoryBasedPlayerRepository>();
+
             services.AddSingleton<IConnectionProvider, ConnectionProvider>();
+            services.AddSingleton<IPacketDataSerializer, JsonPacketDataSerializer>();
+            services.AddSingleton<IPlayerPacketHandler, PlayerPacketHandler>();
+
             services.AddSingleton<Shinobytes.Core.ILogger, Shinobytes.Core.SyntaxHighlightedConsoleLogger>();
             services.AddSingleton<IGame, Game>();
 
@@ -75,7 +81,13 @@ namespace Orbit
                     {
                         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                         var playerSession = await playerSessionProvider.GetAsync(webSocket);
-                        game.PlayerConnectionEstablished(playerSession);                        
+                        if (playerSession == null)
+                        {
+                            await webSocket.CloseAsync(
+                                WebSocketCloseStatus.InternalServerError,
+                                "Nope",
+                                CancellationToken.None);
+                        }
                     }
                     else
                     {
@@ -87,6 +99,6 @@ namespace Orbit
                     await next();
                 }
             });
-        }     
+        }
     }
 }
