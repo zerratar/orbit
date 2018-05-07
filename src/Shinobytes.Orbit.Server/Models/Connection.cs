@@ -23,11 +23,13 @@ namespace Shinobytes.Orbit.Server
             this.socket = socket;
             this.packetDataSerializer = packetDataSerializer;
             this.buffer = new byte[4096];
+            this.KillTask = new TaskCompletionSource<object>();
         }
 
         public ConcurrentQueue<Packet> SendQueue { get; }
 
         public bool Closed => closed || this.socket.CloseStatus.HasValue;
+        public TaskCompletionSource<object> KillTask { get; set; }
 
         public async Task<T> ReceiveAsync<T>()
         {
@@ -42,6 +44,7 @@ namespace Shinobytes.Orbit.Server
 
         public void Close()
         {
+            this.KillTask.SetResult(null);
             this.closed = true;
             if (this.socket.State == WebSocketState.Connecting
                 || this.socket.State == WebSocketState.Open
@@ -84,7 +87,7 @@ namespace Shinobytes.Orbit.Server
             }
 
             try
-            {                
+            {
                 await socket.SendAsync(packet.Build(), packet.MessageType, packet.EndOfMessage, CancellationToken.None);
             }
             catch (Exception exc)

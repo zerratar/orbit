@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shinobytes.Orbit.Server;
 
@@ -18,16 +19,17 @@ namespace Orbit.Controllers
         }
 
         [HttpPost("login")]
-        public string Login([FromBody]string username, [FromBody]string password)
+        [EnableCors("AllowAllOrigins")]
+        public string Login([FromBody] Credentials login)// string username, string password)
         {
             // return status or session id
-            var player = auth.Authenticate(username, password);
+            var player = auth.Authenticate(login.username, login.password);
             if (player != null)
             {
                 // check if a session exists with the username
                 // if so, terminate it. cannot be logged in on multiple devices.
 
-                if (sessionManager.TryGetByUsername(username, out var existingSession))
+                if (sessionManager.TryGetByUsername(login.username, out var existingSession))
                 {
                     sessionManager.EndSession(existingSession);
                 }
@@ -39,6 +41,7 @@ namespace Orbit.Controllers
         }
 
         [HttpGet("logout")]
+        [EnableCors("AllowAllOrigins")]
         public void Logout()
         {
             if (this.sessionManager.TryGet(this.HttpContext.Session.Id, out var session))
@@ -46,5 +49,12 @@ namespace Orbit.Controllers
                 sessionManager.EndSession(session);
             }
         }
+    }
+
+    public class Credentials
+    {
+        public string username { get; set; }
+
+        public string password { get; set; }
     }
 }

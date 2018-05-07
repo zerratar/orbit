@@ -1,9 +1,8 @@
 ﻿namespace Shinobytes.Orbit.Server
 {
-    public class WorldUpdate : GameUpdate
+    public class NodesUpdate : GameUpdate
     {
-        public WorldUpdate(UserSession target)
-            : base(target)
+        public NodesUpdate(UserSession target) : base(target)
         {
         }
 
@@ -13,10 +12,7 @@
             // added    = get-added observed, Target
             // updated  = get-updated observed, Target
             // removed  = get-removed observed, Target
-            // World update includes:
-
-            Target.Send(new Requests.PlayerInfo(Target.Player.Username, Target.Player.Level, Target.Player.Experience,
-                Target.Player.Resources));
+            // Nodes update includes:         
             //      Target.Send(new Requests.Nodes(added, updated, removed));            
         }
     }

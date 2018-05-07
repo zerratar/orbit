@@ -62,5 +62,13 @@ namespace Shinobytes.Orbit.Server
                 }
             }
         }
+
+        public Task KeepAlive()
+        {
+            lock (sessionMutex)
+            {
+                return this.connection.KillTask.Task;
+            }
+        }
     }
 }

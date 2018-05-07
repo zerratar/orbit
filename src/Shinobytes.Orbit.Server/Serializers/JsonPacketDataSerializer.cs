@@ -28,11 +28,22 @@ namespace Shinobytes.Orbit.Server
         public Packet Deserialize(byte[] buffer, int offset, int size, WebSocketMessageType messageType, bool endOfMessage)
         {
             var json = System.Text.Encoding.UTF8.GetString(buffer, offset, size);
-            var obj = JObject.Parse(json);
-            var header = obj["header"].Value<string>();
-            var data = System.Text.Encoding.UTF8.GetBytes(obj["data"].ToString());
 
-            return new Packet(this, header, data, data.Length, messageType, endOfMessage);
+            try
+            {
+
+                var obj = JObject.Parse(json);
+                var header = obj["header"].Value<string>();
+                var data = System.Text.Encoding.UTF8.GetBytes(obj["data"].ToString());
+                return new Packet(this, header, data, data.Length, messageType, endOfMessage);
+
+            }
+            catch
+            {
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes($"\"{json}\"");
+            return new Packet(this, string.Empty, bytes, bytes.Length, messageType, endOfMessage);
         }
 
         public byte[] Deserialize(Packet packet)

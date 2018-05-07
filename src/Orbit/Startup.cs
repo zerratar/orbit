@@ -26,7 +26,7 @@ namespace Orbit
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin());
+                options.AddPolicy("AllowAllOrigins", builder => builder.WithOrigins("http://localhost:8080", "*"));// builder.AllowAnyOrigin());
                 options.AddPolicy("AllowAllMethods", builder => builder.AllowAnyMethod());
                 options.AddPolicy("AllowAllHeaders", builder => builder.AllowAnyHeader());
             });
@@ -35,7 +35,7 @@ namespace Orbit
             services.AddSingleton<IUserSessionManager, UserSessionManager>();
             services.AddSingleton<IPlayerSessionBinder, PlayerSessionBinder>();
             services.AddSingleton<IPlayerAuthenticator, PlayerAuthenticator>();
-
+            services.AddSingleton<IPlayerConnectionHandler, PlayerConnectionHandler>();
             services.AddSingleton<INodeRepository, MemoryCachedFileBasedNodeRepository>();
             services.AddSingleton<IPlayerRepository, MemoryBasedPlayerRepository>();
 
@@ -68,7 +68,14 @@ namespace Orbit
                 ReceiveBufferSize = 4 * 1024
             };
 
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin());
+
             app.UseSession();
+
             app.UseWebSockets(webSocketOptions);
             app.UseMvc();
             app.Use(async (context, next) =>
@@ -88,11 +95,15 @@ namespace Orbit
                                 "Nope",
                                 CancellationToken.None);
                         }
+
+
+                        await playerSession.KeepAlive();
                     }
                     else
                     {
                         context.Response.StatusCode = 400;
                     }
+
                 }
                 else
                 {

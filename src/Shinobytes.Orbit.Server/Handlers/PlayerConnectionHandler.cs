@@ -8,7 +8,10 @@ namespace Shinobytes.Orbit.Server
     {
         private readonly IGame game;
         private readonly IPlayerPacketHandler packetHandler;
-        private readonly ConcurrentDictionary<string, Thread> connectionThreads
+        private readonly ConcurrentDictionary<string, Thread> writeThreads
+            = new ConcurrentDictionary<string, Thread>();
+
+        private readonly ConcurrentDictionary<string, Thread> readThreads
             = new ConcurrentDictionary<string, Thread>();
 
         public PlayerConnectionHandler(IGame game, IPlayerPacketHandler packetHandler)
@@ -19,26 +22,45 @@ namespace Shinobytes.Orbit.Server
 
         public void Open(UserSession userSession, Connection socket)
         {
+
             // start 1 read/write thread per connection, for now. and then keep each connection single threaded.
-            connectionThreads[userSession.Id] = new Thread(() => PlayerConnectionLoop(userSession, socket));
-            connectionThreads[userSession.Id].Start();
+
+            game.PlayerConnectionEstablished(userSession);
+            writeThreads[userSession.Id] = new Thread(() => PlayerConnectionWrite(userSession, socket));
+            writeThreads[userSession.Id].Start();
+
+            readThreads[userSession.Id] = new Thread(() => PlayerConnectionRead(userSession, socket));
+            readThreads[userSession.Id].Start();
         }
 
-        private async void PlayerConnectionLoop(UserSession userSession, Connection socket)
+        private async Task PlayerConnectionWrite(UserSession userSession, Connection socket)
         {
-            game.PlayerConnectionEstablished(userSession);
             do
             {
-                var result = await socket.ReceiveAsync();
-                if (result == null)
-                {
-                    break;
-                }
-
-                await HandlePacketAsync(userSession, socket, result);
                 await ProcessSendQueueAsync(socket);
+
+            } while (!socket.Closed);
+        }
+
+        private async Task PlayerConnectionRead(UserSession userSession, Connection socket)
+        {
+            do
+            {
+                await HandlePacketsAsync(userSession, socket); // fire and forget
+
             } while (!socket.Closed);
             game.PlayerConnectionClosed(userSession);
+        }
+
+        private async Task HandlePacketsAsync(UserSession userSession, Connection socket)
+        {
+            var result = await socket.ReceiveAsync();
+            if (result == null)
+            {
+                return;
+            }
+
+            await HandlePacketAsync(userSession, socket, result);
         }
 
         private async Task ProcessSendQueueAsync(Connection socket)
@@ -57,9 +79,15 @@ namespace Shinobytes.Orbit.Server
         public void Close(UserSession userSession)
         {
             userSession.Close();
-            if (connectionThreads.TryGetValue(userSession.Id, out var thread))
+
+            if (writeThreads.TryGetValue(userSession.Id, out var writeThread))
             {
-                thread.Join();
+                writeThread.Join();
+            }
+
+            if (readThreads.TryGetValue(userSession.Id, out var readThread))
+            {
+                readThread.Join();
             }
         }
     }

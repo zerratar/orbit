@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Shinobytes.Orbit.Server;
 using Shinobytes.Orbit.Server.Models;
@@ -20,6 +21,7 @@ namespace Orbit.Controllers
         }
 
         [HttpGet]
+        [EnableCors("AllowAllOrigins")]
         public string Get()
         {
             if (!sessionManager.TryGet(HttpContext.Session.Id, out _))
@@ -31,12 +33,14 @@ namespace Orbit.Controllers
         }
 
         [HttpGet("area/{latitude}/{longitude}")]
+        [EnableCors("AllowAllOrigins")]
         public IEnumerable<Node> Around(double latitude, double longitude)
         {
             return this.nodeRepository.GetWithin(latitude, longitude, 2000);
         }
 
         [HttpPost("hack/{nodeid}")]
+        [EnableCors("AllowAllOrigins")]
         public string HackNode(string nodeid)
         {
             //1. if someone is hacking this node already, you cannot do anything about it.
@@ -68,6 +72,7 @@ namespace Orbit.Controllers
         }
 
         [HttpPost("takeover/{hacksession}")]
+        [EnableCors("AllowAllOrigins")]
         public string TakeOver(string hacksession)
         {
             if (sessionManager.TryGet(HttpContext.Session.Id, out var session))
@@ -79,6 +84,7 @@ namespace Orbit.Controllers
         }
 
         [HttpGet("info/{nodeid}")]
+        [EnableCors("AllowAllOrigins")]
         public string Info(string nodeid)
         {
             if (sessionManager.TryGet(HttpContext.Session.Id, out var session))
