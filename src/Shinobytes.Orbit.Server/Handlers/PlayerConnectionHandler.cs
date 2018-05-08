@@ -26,10 +26,10 @@ namespace Shinobytes.Orbit.Server
             // start 1 read/write thread per connection, for now. and then keep each connection single threaded.
 
             game.PlayerConnectionEstablished(userSession);
-            writeThreads[userSession.Id] = new Thread(() => PlayerConnectionWrite(userSession, socket));
+            writeThreads[userSession.Id] = new Thread(async () => await PlayerConnectionWrite(userSession, socket));
             writeThreads[userSession.Id].Start();
 
-            readThreads[userSession.Id] = new Thread(() => PlayerConnectionRead(userSession, socket));
+            readThreads[userSession.Id] = new Thread(async () => await PlayerConnectionRead(userSession, socket));
             readThreads[userSession.Id].Start();
         }
 

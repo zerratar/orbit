@@ -19,12 +19,6 @@ namespace Shinobytes.Orbit.Server
 
         public override void Update()
         {
-            // observed = get-observed Target
-            // added    = get-added observed, Target
-            // updated  = get-updated observed, Target
-            // removed  = get-removed observed, Target
-            // World update includes:
-
             var playerInfo = new Requests.PlayerInfo(
                 Target.Player.Username,
                 Target.Player.Level,
@@ -44,10 +38,7 @@ namespace Shinobytes.Orbit.Server
             };
 
             Target.Send(areaNodes);
-            Target.Send(playerInfo);
-
-            // AreaNodes
-            //      Target.Send(new Requests.Nodes(added, updated, removed));            
+            Target.Send(playerInfo);        
         }
     }
 }

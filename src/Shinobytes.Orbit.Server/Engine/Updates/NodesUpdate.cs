@@ -13,13 +13,6 @@
 
         public override void Update()
         {
-            // observed = get-observed Target
-            // added    = get-added observed, Target
-            // updated  = get-updated observed, Target
-            // removed  = get-removed observed, Target
-            // Nodes update includes:         
-            //      Target.Send(new Requests.Nodes(added, updated, removed));         
-
             var geoBounds = Coordinates.GetBoundingBox(Target.Player.Position, Target.Player.ViewRange / 2f);
             var visibleNodes = nodeRepository.GetWithin(Target.Player.Position, Target.Player.ViewRange);
             var delta = nodeObserver.Observe(Target, visibleNodes);
