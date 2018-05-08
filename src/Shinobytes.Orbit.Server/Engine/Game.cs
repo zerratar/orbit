@@ -8,14 +8,19 @@ namespace Shinobytes.Orbit.Server
     public class Game : IGame
     {
         private readonly ILogger logger;
+        private readonly INodeRepository nodeRepository;
+        private readonly INodeObserver nodeObserver;
+
         private readonly ConcurrentQueue<GameUpdate> updateQueue
             = new ConcurrentQueue<GameUpdate>();
 
         private Thread gameThread;
 
-        public Game(ILogger logger)
+        public Game(ILogger logger, INodeRepository nodeRepository, INodeObserver nodeObserver)
         {
             this.logger = logger;
+            this.nodeRepository = nodeRepository;
+            this.nodeObserver = nodeObserver;
         }
 
         public void Begin()
@@ -77,7 +82,7 @@ namespace Shinobytes.Orbit.Server
             logger.WriteDebug($"Player '{userSession.Id}' moved from lat: {position.Latitude}, lon: {position.Longitude} to lat: {latitude}, lon: {longitude}.");
 
             // may need to lock this to prevent it from being used in the world update logic.
-            userSession.Player.Position = new PlayerPosition(latitude, longitude, position.Altitude);
+            userSession.Player.Position = new GeoCoordinate(latitude, longitude, position.Altitude);
 
             // check if we got any new nodes visible for this player, if we do. send the changes
             // ...
@@ -100,11 +105,11 @@ namespace Shinobytes.Orbit.Server
         }
         private void EnqueueNodesUpdate(UserSession userSession)
         {
-            this.updateQueue.Enqueue(new NodesUpdate(userSession));
+            this.updateQueue.Enqueue(new NodesUpdate(userSession, nodeObserver, nodeRepository));
         }
         private void EnqueueWorldUpdate(UserSession userSession)
         {
-            this.updateQueue.Enqueue(new WorldUpdate(userSession));
+            this.updateQueue.Enqueue(new WorldUpdate(userSession, nodeObserver, nodeRepository));
         }
     }
 }

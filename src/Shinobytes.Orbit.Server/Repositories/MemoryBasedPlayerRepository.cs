@@ -15,6 +15,7 @@ namespace Shinobytes.Orbit.Server
                 Id = 0,
                 IsAdmin = true,
                 Level = 1,
+                ViewRange = 2000,
                 Username = "Lichine",
                 Password = "password",
                 Created = DateTime.UtcNow
@@ -25,6 +26,7 @@ namespace Shinobytes.Orbit.Server
                 Id = 1,
                 IsAdmin = true,
                 Level = 1,
+                ViewRange = 2000,
                 Username = "Zerratar",
                 Password = "password",
                 Created = DateTime.UtcNow
@@ -35,6 +37,7 @@ namespace Shinobytes.Orbit.Server
                 Id = 2,
                 IsAdmin = false,
                 Level = 1,
+                ViewRange = 500,
                 Username = "User",
                 Password = "password",
                 Created = DateTime.UtcNow

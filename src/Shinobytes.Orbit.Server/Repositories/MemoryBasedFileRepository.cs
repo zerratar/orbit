@@ -10,15 +10,17 @@ namespace Shinobytes.Orbit.Server
     public abstract class MemoryBasedFileRepository<T, TKey>
     {
         private readonly string store;
+        private readonly IChangeTracker<T> changeTracker;
         private readonly Func<T, TKey> getKey;
 
         protected readonly ConcurrentDictionary<TKey, T> items
             = new ConcurrentDictionary<TKey, T>();
 
         private bool hasLoaded = false;
-        protected MemoryBasedFileRepository(string store, Func<T, TKey> getKey)
+        protected MemoryBasedFileRepository(string store, IChangeTracker<T> changeTracker, Func<T, TKey> getKey)
         {
             this.store = store;
+            this.changeTracker = changeTracker;
             this.getKey = getKey;
         }
 
@@ -41,13 +43,16 @@ namespace Shinobytes.Orbit.Server
             {
                 var key = getKey(n);
                 items[key] = n;
+                changeTracker.Update(n);
                 Save(getKey(n), n);
             }
         }
 
-        public void Store(TKey key, T val)
+        public void Store(T val)
         {
             LoadRepository();
+            changeTracker.Update(val);
+            var key = getKey(val);
             items[key] = val;
             Save(key, val);
         }

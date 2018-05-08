@@ -38,11 +38,11 @@ namespace Orbit
             services.AddSingleton<IPlayerConnectionHandler, PlayerConnectionHandler>();
             services.AddSingleton<INodeRepository, MemoryCachedFileBasedNodeRepository>();
             services.AddSingleton<IPlayerRepository, MemoryBasedPlayerRepository>();
-
+            services.AddSingleton<INodeObserver, SessionNodeObserver>();
             services.AddSingleton<IConnectionProvider, ConnectionProvider>();
             services.AddSingleton<IPacketDataSerializer, JsonPacketDataSerializer>();
             services.AddSingleton<IPlayerPacketHandler, PlayerPacketHandler>();
-
+            services.AddSingleton<INodeChangeTracker, NodeChangeTracker>();
             services.AddSingleton<Shinobytes.Core.ILogger, Shinobytes.Core.SyntaxHighlightedConsoleLogger>();
             services.AddSingleton<IGame, Game>();
 

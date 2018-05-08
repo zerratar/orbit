@@ -9,6 +9,8 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
+        public int Tier { get; set; }
+
         public bool WithinRadiusMeters(double originLatitude, double originLongitude, double meters)
         {
             var distance = Coordinates.Distance(originLatitude, originLongitude, Latitude, Longitude, 'K');
